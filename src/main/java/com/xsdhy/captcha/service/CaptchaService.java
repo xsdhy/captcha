@@ -43,7 +43,6 @@ public class CaptchaService {
      */
     private static double CUT_IN_SRC_SCALE = 2.78;
 
-
     /**
      * 验证票据redis-key
      */
@@ -286,36 +285,27 @@ public class CaptchaService {
                     //抠图上复制对应颜色值
                     targetImage.setRGB(i, j, rgb_ori);
 
-                    //原图对应位置颜色变化
-//                    oriImage.setRGB(_x, _y, Color.LIGHT_GRAY.getRGB());
-
-                    Color color = new Color(0, 0, 0, 211);
+                    //处理方式一:设置一个固定色
+                    Color color = new Color(24, 10, 8, 255);
                     oriImage.setRGB(_x, _y, color.getRGB());
 
-
+//处理方式二:背景加透明遮罩
 //                    int r = (0xff & rgb_ori);
 //                    int g = (0xff & (rgb_ori >> 8));
 //                    int b = (0xff & (rgb_ori >> 16));
 //                    rgb_ori = r + (g << 8) + (b << 16) + (140 << 24);
 //                    oriImage.setRGB(_x, _y, rgb_ori);
 
-
-                    int a = (rgb_ori >> 24) & 0xff;
-                    int r = (rgb_ori >> 16) & 0xff;
-                    int g = (rgb_ori >> 8) & 0xff;
-                    int b = rgb_ori & 0xff;
-
-                    int avg = (r + g + b) / 4;
-
-                    int p = (a << 24) | (avg << 16) | (avg << 8) | avg;
+//处理方式三:灰阶处理
+//                    int a = (rgb_ori >> 24) & 0xff;
+//                    int r = (rgb_ori >> 16) & 0xff;
+//                    int g = (rgb_ori >> 8) & 0xff;
+//                    int b = rgb_ori & 0xff;
+//                    int avg = (r + g + b) / 4;
+//                    int p = (a << 24) | (avg << 16) | (avg << 8) | avg;
 //                    oriImage.setRGB(_x, _y, p);
-
                 } else if (rgbFlg == 2) {
                     //设置边框区域
-
-                    Color color = new Color(0, 0, 0, 211);
-//                    targetImage.setRGB(i, j,color.getRGB());
-//                    oriImage.setRGB(_x, _y, color.getRGB());
                     targetImage.setRGB(i, j, Color.WHITE.getRGB());
                     oriImage.setRGB(_x, _y, Color.GRAY.getRGB());
                 } else if (rgbFlg == 0) {
