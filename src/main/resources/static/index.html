@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>滑动验证码</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+
+    <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/bootstrap-icons/1.8.1/font/bootstrap-icons.css">
+    <style>
+        .slider-btn {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            left: 0;
+            top: -7px;
+            z-index: 12;
+            cursor: pointer;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACwAAAAsCAYAAAAehFoBAAAD0klEQVRYhe2Zz2sTQRTHJzXUpCKCEfFgFDzYir9AQfEvUKRCUQ+Kvw6KFwVBPIiHWj2IB/GkF9GDYm9VCxapd6EoKPgDTBUPMZ7EBkSapDU18hJf8vbte7Oz2U2h4LvM7szOvM985+3MzqxZSFar1RYUb90ScTRyfmBr783Rt5OQSuVYBmlUX5GANUAXaxc+NLAEeePRm70f370/nc1m0kszqxPVamUN5CeTqa+/pr7VCoWp8oYtm+9cOLDtGa3XDnQoYAq7b8+O49sPDh5JL1uxlj4zN1Py1Fm0uMdzX/75I/965Orw0/FXD9oBdwK2gSIggME1BcR72gks5+Cu0KGAT16+P7p+U2+fYUpyFTk4L6N1Pn2YzN27cmIAy4PArcBU2aG7Y89BVQ1UgqQK85S2AWoPnerf7QLcZSvUYMEJwnHFpA5JKX0e2gYfXKRQwFhRgpVAOaRkWEdqyxVaBKYxy8PACMPPyzXjStN2EBp82qBVhWE2gBdMCoMglXnntHs+s8A1+ATfWns+YOwZTF20cbjWhtQGqYWMNiqQD76NorKoMPSwO9XTXBBQXWmulSyo3LDw4G2Cb01lDzBVl/fasJh7MT48d+jJ4T+Q0mdd83mbXHFNZVFhvtxKKtwqjyVWbcyYkXUTnrncNV8aBZrHGVRgGAptVnCdDVzNtqDAtRQWTWCUfuXOM/u1XsdtGiwaZzGSwvCJSO+DYi0uhY0gDrLQOBZiuOaLnU6oLMH6xfCz+IC7U0vExiUnvLwdWNu8LLEkwziyhYSUb+sIX4RczafwbGU60Elcxpd6FxYhhhP5WKkspqncAm2w0G/kJjBmwobRBCjdaYPYBf/IQs2n8PeXtx8bJeDnywAW/COLFRg3hajwfCuNsJSFmvgt8eVzIYeVNKXPpvvrB13nfh/ripIvwUIKDNIzvk0orCqwhu86ev0S7S29Nv/e7GQyZarViu/7N0y+BAvpxMOL10BhvikVewsPzlZKeUNCgisNTmemi+IiEiaftt8Kw1JeCgcRGHsEhxxUXUxpTLcb31I9Cg6+jbLlV+MJekjjCIeKKuFVxT2l9QwLN/CpqWtsByl055zNLu/DfBpnPHU1qb6prwHF5imQdqCiKowVGg20Vj8bpE1lei2NDPgIgrUC04qNYyQZ2jWOJUVbHU7Ed1RFoWHIKLQRZg9JQUnR1vJbzLnCmjDnwxjTeNwqfVzzl4nfM9edO27l0AgOey76QroYKArfCB090LaBe+FxP4jqN+Ievro4ZFjQSMAauKtF+ZsUy28vNNtvrzj9/LeOmTHmL/GUXzb7DL9YAAAAAElFTkSuQmCC);
+            transition: inherit
+        }
+
+        .ver-tips {
+            position: absolute;
+            left: 0;
+            bottom: -22px;
+            background: rgba(255, 255, 255, .9);
+            height: 22px;
+            line-height: 22px;
+            font-size: 12px;
+            width: 100%;
+            margin: 0;
+            text-align: left;
+            padding: 0 8px;
+            transition: all .4s
+        }
+
+        .slider-tips {
+            bottom: 0
+        }
+
+        .ver-tips span {
+            display: inline-block;
+            vertical-align: top;
+            line-height: 22px;
+            color: #455
+        }
+
+        .hidden {
+            display: none
+        }
+
+        .re-btn {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 20px;
+            padding: 0 16px
+        }
+    </style>
+
+
+    <script>
+        //判断是手机还是电脑
+        function checkPhone() {
+            return !!(navigator.userAgent.match(/Android/i) ||
+                navigator.userAgent.match(/webOS/i) ||
+                navigator.userAgent.match(/iPhone/i) ||
+                navigator.userAgent.match(/iPad/i) ||
+                navigator.userAgent.match(/iPod/i) ||
+                navigator.userAgent.match(/BlackBerry/i) ||
+                navigator.userAgent.match(/Windows Phone/i));
+        }
+
+        /**
+         * 设置滑块到起始位置
+         */
+        function moveBlockToStart() {
+            $(".slider-btn").css({"left": '0', "transition": "left 0.5s"});
+            $("#puzzleLost").css({"left": '0', "transition": "left 0.5s"});
+            $("#puzzleShadow").css({"left": '0', "transition": "left 0.5s"});
+        }
+
+
+        /**
+         * 移动滑块:拖动滑块实现的重要方法
+         * @param {number} d 距离
+         */
+        function moveBlock(d) {
+            $(".slider-btn").css({"left": d + 'px', "transition": "inherit"});
+            $("#puzzleLost").css({"left": d + 'px', "transition": "inherit"});
+            $("#puzzleShadow").css({"left": d + 'px', "transition": "inherit"});
+        }
+
+
+        function imgVer(Config) {
+            var el = eval(Config.el);
+            var w = Config.width;
+            var h = Config.height;
+            var SrcImage = Config.SrcImage
+            var CutImage = Config.CutImage
+            var YPosition = Config.YPosition
+            var SrcImageHeight = Config.SrcImageHeight;
+            var SrcImageWidth = Config.SrcImageWidth;
+
+            //计算比例
+            var widthScale = w / SrcImageWidth;
+            var heightScale = h / SrcImageHeight;
+
+
+            var padding = 20;
+
+
+            var imgSrc = SrcImage;
+
+            var left_Num = 0;
+            var html = "";
+            html += '<div style="position:relative;padding:10px 10px 20px;border:1px solid #ddd;background:#f2ece1;border-radius:16px;">';
+            html += '   <div style="position:relative;overflow:hidden;width:' + w + 'px;">';
+            html += '       <div style="position:relative;width:' + w + 'px;height:' + h + 'px;">';
+            html += '           <img id="scream" src="' + imgSrc + '" style="width:' + w + 'px;height:' + h + 'px;">';
+            html += '           <canvas id="puzzleBox" width="' + w + '" height="' + h + '" style="position:absolute;left:0;top:0;z-index:22;"></canvas>';
+            html += '       </div>';
+            html += '       <div class="puzzle-lost-box" style="position:absolute;width:' + w + 'px;height:' + h + 'px;top:0;left:' + left_Num + 'px;z-index:111;">';
+            html += '           <canvas id="puzzleShadow" width="' + w + '" height="' + h + '" style="position:absolute;left:0;top:0;z-index:22;"></canvas>';
+            html += '           <canvas id="puzzleLost" width="' + w + '" height="' + h + '" style="position:absolute;left:0;top:0;z-index:33;"></canvas>';
+            html += '       </div>';
+            html += '       <p class="ver-tips"></p>';
+            html += '   </div>';
+            html += '   <div class="re-btn"><i class="bi bi-arrow-clockwise" style="font-size: 14px; color: #075907;"></i></div>';
+            html += '</div>';
+            html += '<br>';
+            html += '<div style="position:relative;width:' + w + 'px;margin:auto;touch-action: pan-y">'; //设置触摸区域，防止左滑返回
+            html += '   <div style="border:1px solid #c3c3c3;border-radius:24px;background:#ece4dd;box-shadow:0 1px 1px rgba(12,10,10,0.2) inset;">';
+            html += '       <p style="font-size:12px;color: #486c80;line-height:28px;margin:0;text-align:center;">按住左边滑块，拖动完成上方拼图</p>';
+            html += '   </div>';
+            html += '   <div class="slider-btn"></div>';
+            html += '</div>';
+            el.html(html);
+
+
+            var c_l = document.getElementById("puzzleLost");
+            var ctx_l = c_l.getContext("2d");
+            var img = new Image();
+            img.src = CutImage;
+            img.onload = function () {
+                //这里的100是滑块的尺寸
+                ctx_l.drawImage(img, 0, YPosition * heightScale, Config.CutImageWidth * widthScale, Config.CutImageHeight * heightScale);
+            }
+
+            var moveStart = 0;
+            var moveCurrentX = 0;
+
+            if (checkPhone()) {
+                //Mobile端
+                document.getElementsByClassName('slider-btn')[0].addEventListener("touchstart", function (e) {
+                    e = e || window.event;
+                    moveStart = e.touches[0].pageX;
+                }, false);
+
+                document.addEventListener("touchmove", function (e) {
+                    if (moveStart <= 0) {
+                        return;
+                    }
+
+                    e = e || window.event;
+                    moveCurrentX = e.touches[0].pageX;
+                    var d = moveCurrentX - moveStart;
+
+                    if (d > 0 && d <= (w - 2 * padding)) {
+                        moveBlock(d)
+                    }
+                }, false);
+                document.addEventListener("touchend", function (e) {
+                    if (moveStart > 0) {
+                        var moveEnd_X = moveCurrentX - moveStart;
+                        verifyCaptcha(moveEnd_X, widthScale, Config);
+                    }
+                    //设置滑块到起始位置
+                    setTimeout(moveBlockToStart, 1000);
+                    moveStart = 0;
+                    moveCurrentX = 0;
+                    refreshCaptcha();
+                    // console.log("mobile-refresh");   //mobile刷新
+                }, false)
+            } else {
+                //PC端
+                $(".slider-btn").mousedown(function (e) {
+                    e = e || window.event;
+                    moveStart = e.pageX;
+                });
+
+                onmousemove = function (e) {
+                    if (moveStart <= 0) {
+                        return;
+                    }
+                    e = e || window.event;
+                    moveCurrentX = e.pageX;
+                    var d = moveCurrentX - moveStart;
+                    if (d > 0 && d <= (w - 2 * padding)) {
+                        moveBlock(d)
+                    }
+                };
+                onmouseup = function (e) {
+                    if (moveStart > 0) {
+                        var moveEnd_X = moveCurrentX - moveStart;
+                        verifyCaptcha(moveEnd_X, widthScale, Config);
+                    }
+                    //设置滑块到起始位置
+                    setTimeout(moveBlockToStart, 1000);
+                    moveStart = 0;
+                    moveCurrentX = 0;
+                    refreshCaptcha();
+                }
+            }
+        }
+
+
+        /**
+         * 提交校验
+         * @param {number} moveEnd_X 最终鼠标的位置
+         * @param {number} widthScale 一个比例
+         * @param {*} Config
+         */
+        function verifyCaptcha(moveEnd_X, widthScale, Config) {
+            console.log("最后结果:", moveEnd_X / widthScale)
+            $.ajax({
+                url: "/captcha/verify",
+                contentType: "application/json",
+                data: JSON.stringify({blockX: moveEnd_X / widthScale, ticket: Config.ticket}),
+                dataType: "json",
+                type: "POST",
+                cache: false,
+                success: function (data) {
+                    if (2000 === data.code) {
+                        $(".ver-tips").html('<span style="color:#42ca6b;">验证通过</span><span></span>');
+                        $(".ver-tips").addClass("slider-tips");
+                        $(".puzzle-lost-box").addClass("hidden");
+                        $("#puzzleBox").addClass("hidden");
+                        setTimeout(function () {
+                            $(".ver-tips").removeClass("slider-tips");
+                            imgVer(Config);
+                        }, 2000);
+                    } else {
+                        $(".ver-tips").html('<span style="color:red;">验证失败</span>');
+                        $(".ver-tips").addClass("slider-tips");
+                        setTimeout(function () {
+                            $(".ver-tips").removeClass("slider-tips");
+                        }, 2000);
+                    }
+                }
+            })
+        }
+
+        //刷新验证码
+        function refreshCaptcha() {
+            console.log("刷新")
+            $(".re-btn").unbind('click').click(function () {
+                getCaptcha();
+            })
+        }
+
+        function getCaptcha() {
+            $.ajax({
+                url: "/captcha",
+                cache: false,
+                type: "GET",
+                success: function (data) {
+                    console.log("DEBUG-X:", data.slideBlockX);
+                    imgVer({
+                        el: '$("#imgVer")',
+                        width: '320',
+                        height: '180',
+                        SrcImage: "data:image/jpg;base64," + data.backgroundImage,
+                        CutImage: "data:image/jpg;base64," + data.slideBlockImage,
+                        YPosition: data.slideBlockY,
+                        SrcImageWidth: data.backgroundWidth,
+                        SrcImageHeight: data.backgroundHeight,
+                        CutImageWidth: data.slideBlockWidth,
+                        CutImageHeight: data.slideBlockHeight,
+                        ticket: data.ticket,
+                    });
+                },
+                error: function () {
+                    alert("获取验证码失败");
+                }
+            });
+        }
+
+
+        getCaptcha();
+    </script>
+
+    <script>
+
+    </script>
+</head>
+
+<body>
+<div class="verBox">
+    <div id="imgVer" style="display:inline-block;"></div>
+</div>
+
+</body>
+
+</html>
