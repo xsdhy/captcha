@@ -1,4 +1,4 @@
-package com.xsdhy.captcha.vo;
+package com.xsdhy.captcha.dto;
 
 import lombok.Data;
 

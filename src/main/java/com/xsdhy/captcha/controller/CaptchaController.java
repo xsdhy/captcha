@@ -1,9 +1,10 @@
 package com.xsdhy.captcha.controller;
 
+import com.xsdhy.captcha.common.Resp;
 import com.xsdhy.captcha.service.CaptchaService;
 import com.xsdhy.captcha.vo.CaptchaResultVO;
 import com.xsdhy.captcha.vo.CaptchaVO;
-import com.xsdhy.captcha.vo.CaptchaVerifyDTO;
+import com.xsdhy.captcha.dto.CaptchaVerifyDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,18 +29,16 @@ public class CaptchaController {
 
 
     @GetMapping("/captcha")
-    public CaptchaVO getCaptcha(){
-        return this.captchaService.captcha();
+    public Resp<CaptchaVO> getCaptcha() {
+        return Resp.ok(this.captchaService.captcha());
     }
 
     @PostMapping("/captcha/verify")
-    public CaptchaResultVO verifyCaptcha(@RequestBody CaptchaVerifyDTO captchaVerifyDTO){
-        CaptchaResultVO captchaResultVO = new CaptchaResultVO();
-        if (this.captchaService.verifyTicket(captchaVerifyDTO.getTicket(),captchaVerifyDTO.getBlockX())){
-            captchaResultVO.setCode(2000);
-        }else {
-            captchaResultVO.setCode(5000);
+    public Resp<Void> verifyCaptcha(@RequestBody CaptchaVerifyDTO captchaVerifyDTO) {
+        if (this.captchaService.verifyTicket(captchaVerifyDTO)) {
+            return Resp.ok();
+        } else {
+            return Resp.error("验证失败");
         }
-        return captchaResultVO;
     }
 }

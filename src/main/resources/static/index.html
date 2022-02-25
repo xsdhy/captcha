@@ -268,19 +268,19 @@
                 cache: false,
                 type: "GET",
                 success: function (data) {
-                    console.log("DEBUG-X:", data.slideBlockX);
+                    console.log("DEBUG-X:", data.data.slideBlockX);
                     imgVer({
                         el: '$("#imgVer")',
                         width: '320',
                         height: '180',
-                        SrcImage: "data:image/jpg;base64," + data.backgroundImage,
-                        CutImage: "data:image/jpg;base64," + data.slideBlockImage,
-                        YPosition: data.slideBlockY,
-                        SrcImageWidth: data.backgroundWidth,
-                        SrcImageHeight: data.backgroundHeight,
-                        CutImageWidth: data.slideBlockWidth,
-                        CutImageHeight: data.slideBlockHeight,
-                        ticket: data.ticket,
+                        SrcImage: "data:image/jpg;base64," + data.data.backgroundImage,
+                        CutImage: "data:image/jpg;base64," + data.data.slideBlockImage,
+                        YPosition: data.data.slideBlockY,
+                        SrcImageWidth: data.data.backgroundWidth,
+                        SrcImageHeight: data.data.backgroundHeight,
+                        CutImageWidth: data.data.slideBlockWidth,
+                        CutImageHeight: data.data.slideBlockHeight,
+                        ticket: data.data.ticket,
                     });
                 },
                 error: function () {
